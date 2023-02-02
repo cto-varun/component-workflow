@@ -1,0 +1,34 @@
+{
+    "name": "@ivoyant/component-workflow",
+    "version": "1.0.0",
+    "main": "dist/index.js",
+    "title": "StateMachine",
+    "description": "",
+    "icon": "icon.png",
+    "scripts": {
+        "start": "ist s",
+        "build": "ist b",
+        "storybook": "ist storybook",
+        "prepublish": "ist b -u"
+    },
+    "files": [
+        "dist",
+        "icon.png"
+    ],
+    "author": "",
+    "license": "",
+    "peerDependencies": {
+        "react": "^18.2.0"
+    },
+    "dependencies": {
+        "@ivoyant/component-message-bus": "^1.0.0",
+        "axios": "^0.21.1",
+        "crypto-js": "^4.0.0",
+        "js-plugin": "1.1.0",
+        "jsonata": "^1.8.4",
+        "xstate": "4.35.2"
+    },
+    "devDependencies": {
+        "@ivoyant/cli": "^1.1.2"
+    }
+}

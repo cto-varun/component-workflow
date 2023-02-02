@@ -1,0 +1,1310 @@
+{
+    "templates": {
+        "SingleStepProcess": {
+            "id": "SingleStepProcess",
+            "initial": "selectAction",
+            "context": {},
+            "states": {
+                "selectAction": {
+                    "on": {
+                        "SUBMIT": "submit",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "submit": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onDone"
+                                }
+                            ],
+                            "target": "success"
+                        },
+                        "onError": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onError"
+                                }
+                            ],
+                            "target": "error"
+                        }
+                    }
+                },
+                "error": {
+                    "entry": [
+                        {
+                            "type": "helpers-log"
+                        }
+                    ],
+                    "on": {
+                        "SUBMIT": "submit",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "success": {
+                    "type": "final"
+                },
+                "cancel": {
+                    "entry": [
+                        {
+                            "type": "helpers-log"
+                        }
+                    ],
+                    "type": "final"
+                }
+            }
+        },
+        "CreateContact": {
+            "id": "CreateContact",
+            "initial": "selectAction",
+            "context": {},
+            "states": {
+                "selectAction": {
+                    "on": {
+                        "SUBMIT": "submit",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "submit": {
+                    "entry": [
+                        {
+                            "type": "helpers-cache",
+                            "data": {
+                                "op": "put",
+                                "key": "contactInfo",
+                                "expr": "body.request.body"
+                            }
+                        }
+                    ],
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onDone"
+                                }
+                            ],
+                            "target": "success"
+                        },
+                        "onError": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onError"
+                                }
+                            ],
+                            "target": "error"
+                        }
+                    }
+                },
+                "error": {
+                    "entry": [
+                        {
+                            "type": "helpers-log"
+                        }
+                    ],
+                    "on": {
+                        "SUBMIT": "submit",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "success": {
+                    "type": "final"
+                },
+                "cancel": {
+                    "entry": [
+                        {
+                            "type": "helpers-log"
+                        }
+                    ],
+                    "type": "final"
+                }
+            }
+        },
+        "CallService": {
+            "id": "CallService",
+            "initial": "start",
+            "context": {},
+            "states": {
+                "start": {
+                    "on": {
+                        "SUBMIT": "submit"
+                    }
+                },
+                "submit": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onDone"
+                                }
+                            ],
+                            "target": "success"
+                        },
+                        "onError": {
+                            "actions": [
+                                {
+                                    "type": "helpers-log",
+                                    "data": "onError"
+                                }
+                            ],
+                            "target": "error"
+                        }
+                    }
+                },
+                "success": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "UpdateEquipment": {
+            "id": "UpdateEquipment",
+            "initial": "start",
+            "context": {},
+            "states": {
+                "start": {
+                    "on": {
+                        "VALIDATE": "validate",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "validate": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForConfirmation"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "waitForConfirmation": {
+                    "on": {
+                        "CONFIRM": "confirm",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "confirm": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "complete"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "error": {
+                    "on": {
+                        "VALIDATE": "validate",
+                        "CANCEL": "cancel",
+                        "COFIRM": "confirm"
+                    }
+                },
+                "complete": {
+                    "type": "final"
+                },
+                "cancel": {
+                    "type": "final"
+                }
+            }
+        },
+        "UpdateEquipmentWithOtp": {
+            "id": "UpdateEquipmentWithOtp",
+            "initial": "start",
+            "context": {},
+            "states": {
+                "start": {
+                    "on": {
+                        "GENERATE": "generateOtp",
+                        "CANCEL": "cancel",
+                        "VALIDATE": "validate",
+                        "GETSQA": "getSqa",
+                        "CONFIMRM": "confirm"
+                    }
+                },
+                "generateOtp": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForGenerate"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "waitForGenerate": {
+                    "on": {
+                        "VALIDATEOTP": "validateOtp",
+                        "CANCEL": "cancel",
+                        "GENERATE": "generateOtp"
+                    }
+                },
+                "getSqa": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForSqa"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "waitForSqa": {
+                    "on": {
+                        "VALIDATECUSTOMER": "validateCustomer",
+                        "CANCEL": "cancel",
+                        "GETSQA": "getSqa"
+                    }
+                },
+                "validateOtp": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForValidate"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "validateCustomer": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForValidate"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "waitForValidate": {
+                    "on": {
+                        "VALIDATE": "validate",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "validate": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForConfirm"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "waitForConfirm": {
+                    "on": {
+                        "CONFIRM": "confirm",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "confirm": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "complete"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "error": {
+                    "on": {
+                        "CANCEL": "cancel",
+                        "CONFIRM": "confirm",
+                        "GENERATE": "generateOtp",
+                        "GETSQA": "getSqa",
+                        "VALIDATEOTP": "validateOtp",
+                        "VALIDATE": "validate",
+                        "VALIDATECUSTOMER": "validateCustomer"
+                    }
+                },
+                "complete": {
+                    "type": "final"
+                },
+                "cancel": {
+                    "type": "final"
+                }
+            }
+        },
+        "ChangeCTN": {
+            "id": "ChangeCTN",
+            "initial": "start",
+            "context": {
+                "jumpTo": {
+                    "NEXT": {
+                        "conditionExpr": "(decisionData.accountBalance <= -15 or decisionData.accountSubType = 'Z' or decisionData.activityFee = 0) ? 'NEWNUMBER':'PAYMENT'"
+                    },
+                    "INIT": {
+                        "conditionExpr": "(routeContext.src = 'recoverCTN'?'GETCTNS':'NUMBERDETAILS')"
+                    }
+                },
+                "mappings": {
+                    "newNumber": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':data.NEXT.request},{'datasource':data.INIT.datasources[0]}])}",
+                            "responseMapping": {
+                                "error": {
+                                    "messageExpr": "(error.response.data ? error.response.data.message : error.response.statusText)"
+                                }
+                            }
+                        }
+                    ],
+                    "getRecoverableCTNs": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':{'datasource':data.INIT.datasources[1],'request':{'params':{'phonenumber':data.INIT.routeData[0].telephoneData.telephoneNumber}}}}",
+                            "responseMapping": {
+                                "error": {
+                                    "messageExpr": "(error.response.data ? error.response.data.message : error.response.statusText)"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "INIT": {
+                            "actions": ["helpers-store", "jumpTo"]
+                        },
+                        "GETCTNS": "getRecoverableCTNs",
+                        "NUMBERDETAILS": "numberdetails"
+                    }
+                },
+                "getRecoverableCTNs": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "getRecoverableCTNs"
+                        },
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-storeResp",
+                                    "data": {
+                                        "key": "recoverableCTNs"
+                                    }
+                                }
+                            ],
+                            "target": "numberdetails"
+                        },
+                        "onError": {
+                            "target": "numberdetails"
+                        }
+                    }
+                },
+                "numberdetails": {
+                    "on": {
+                        "NEXT": {
+                            "actions": ["helpers-store", "jumpTo"]
+                        },
+                        "PAYMENT": "payment",
+                        "NEWNUMBER": "newNumber",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "payment": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "submitPayment": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "newNumber"
+                        },
+                        "onError": {
+                            "target": "payment"
+                        }
+                    }
+                },
+                "newNumber": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "newNumber"
+                        },
+                        "onDone": {
+                            "target": "end"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "cancel": {
+                    "type": "final"
+                },
+                "end": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "MoveSub": {
+            "id": "MoveSubscriber",
+            "initial": "start",
+            "context": {
+                "jumpTo": {
+                    "CONFIRM": {
+                        "conditionExpr": "data.moveSubCheck.totalDue > 0 ? 'PAYMENT':'MOVESUBCONFRIM'",
+                        "source": "context"
+                    }
+                },
+                "mappings": {
+                    "moveSubCheck": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body':{'linesToMove': [$map($filter(data.INIT.data.accountDetails.subscribers, function($v, $i, $a) {$v.subscriberDetails.phoneNumber in ($exists(data.selectedCTNs) ? data.selectedCTNs.request.params.phoneNumbers : data.lookupAccountReq.request.params.phoneNumbers)}), function($v, $i, $a) {{'telephoneNumber': $v.subscriberDetails.phoneNumber,'currentSOC':$v.services.ratePlans.current[0].soc}})],'phoneNumbers':$exists(data.selectedCTNs) ? data.selectedCTNs.request.params.phoneNumbers : data.lookupAccountReq.request.params.phoneNumbers,'sourceBillingAccountNumber':data.INIT.data.accountDetails.billingAccountNumber,'targetBillingAccountNumber':$string($exists(data.newAccount) ? data.newAccount.billingAccountNumber: data.lookupAccount.billingAccountNumber)}}},{'datasource':data.INIT.datasources[0]}])}"
+                        }
+                    ],
+                    "moveSub": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body':{'linesToMove': [$map($filter(data.INIT.data.accountDetails.subscribers, function($v, $i, $a) {$v.subscriberDetails.phoneNumber in ($exists(data.selectedCTNs) ? data.selectedCTNs.request.params.phoneNumbers : data.lookupAccountReq.request.params.phoneNumbers)}), function($v, $i, $a) {{'telephoneNumber': $v.subscriberDetails.phoneNumber,'currentSOC':$v.services.ratePlans.current[0].soc}})],'linesToCancel': [$map($filter(data.INIT.data.accountDetails.subscribers, function($v, $i, $a) {$v.subscriberDetails.phoneNumber in (data.cancelledLines.request.body.cancelledLines)}), function($v, $i, $a) {{'telephoneNumber': $v.subscriberDetails.phoneNumber,'currentSOC':$v.services.ratePlans.current[0].soc}})],'phoneNumbers':$exists(data.selectedCTNs) ? data.selectedCTNs.request.params.phoneNumbers : data.lookupAccountReq.request.params.phoneNumbers,'sourceBillingAccountNumber':data.INIT.data.accountDetails.billingAccountNumber,'targetBillingAccountNumber':$string($exists(data.newAccount) ? data.newAccount.billingAccountNumber: data.lookupAccount.billingAccountNumber)}}},{'datasource':data.INIT.datasources[1]}])}"
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "INIT": {
+                            "actions": ["helpers-store"],
+                            "target": "newOrExistingTargetAccount"
+                        }
+                    }
+                },
+                "newOrExistingTargetAccount": {
+                    "on": {
+                        "NEWACCOUNT": "waitForNewAccount",
+                        "EXISTINGACCOUNT": "searchAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "waitForNewAccount": {
+                    "on": {
+                        "CREATEACCOUNT": {
+                            "target": "waitForNewAccount",
+                            "actions": [
+                                {
+                                    "type": "helpers-store",
+                                    "data": {
+                                        "key": "selectedCTNs"
+                                    }
+                                },
+                                {
+                                    "type": "helpers-sendMessage",
+                                    "data": {
+                                        "event": "CREATEACCOUNT.SHOW",
+                                        "data": {
+                                            "source": "moveSub"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "NEWACCOUNTCREATED": {
+                            "target": "moveSubCheck",
+                            "actions": [
+                                {
+                                    "type": "helpers-store",
+                                    "data": {
+                                        "key": "newAccount",
+                                        "transform": "data.event.data.data"
+                                    }
+                                }
+                            ]
+                        },
+                        "EXISTINGACCOUNT": "searchAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "searchAccount": {
+                    "on": {
+                        "NEWACCOUNT": "waitForNewAccount",
+                        "LOOKUP": "lookupAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "lookupAccount": {
+                    "entry": [
+                        {
+                            "type": "helpers-store",
+                            "data": {
+                                "key": "lookupAccountReq"
+                            }
+                        }
+                    ],
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-storeResp",
+                                    "data": {
+                                        "key": "lookupAccount"
+                                    }
+                                }
+                            ],
+                            "target": "validate"
+                        },
+                        "onError": {
+                            "target": "searchAccountRetry"
+                        }
+                    }
+                },
+                "searchAccountRetry": {
+                    "on": {
+                        "LOOKUP": "lookupAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "validate": {
+                    "on": {
+                        "VALIDATE": "validateAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "reenterSecurityDetails": {
+                    "on": {
+                        "VALIDATE": "validateAccount",
+                        "CANCEL": "cancelFromAccountSearch"
+                    }
+                },
+                "validateAccount": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "moveSubCheck"
+                        },
+                        "onError": {
+                            "target": "reenterSecurityDetails"
+                        }
+                    }
+                },
+                "cancelFromAccountSearch": {
+                    "type": "final"
+                },
+                "moveSubCheck": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "moveSubCheck"
+                        },
+                        "onDone": {
+                            "actions": [
+                                {
+                                    "type": "helpers-storeResp",
+                                    "data": {
+                                        "key": "moveSubCheck"
+                                    }
+                                }
+                            ],
+                            "target": "waitForConfirmation"
+                        },
+                        "onError": {
+                            "target": "searchAccountRetry"
+                        }
+                    }
+                },
+                "waitForConfirmation": {
+                    "on": {
+                        "CONFIRM": {
+                            "actions": [
+                                {
+                                    "type": "helpers-store",
+                                    "data": {
+                                        "key": "cancelledLines"
+                                    }
+                                },
+                                "jumpTo"
+                            ]
+                        },
+                        "PAYMENT": "payment",
+                        "MOVESUBCONFRIM": "confirmMoveSub",
+                        "CANCEL": "cancelMoveSub"
+                    }
+                },
+                "cancelMoveSub": {
+                    "type": "final"
+                },
+                "payment": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancelFromPayment"
+                    }
+                },
+                "cancelFromPayment": {
+                    "type": "final"
+                },
+                "submitPayment": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "paymentSuccess"
+                        },
+                        "onError": {
+                            "target": "paymentError"
+                        }
+                    }
+                },
+                "paymentSuccess": {
+                    "on": {
+                        "": "confirmMoveSub"
+                    }
+                },
+                "paymentError": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancelFromPayment"
+                    }
+                },
+                "confirmMoveSub": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "moveSub"
+                        },
+                        "onDone": {
+                            "target": "end"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "end": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "ChangeSubStatus": {
+            "id": "ChangeSubStatus",
+            "initial": "start",
+            "context": {},
+            "states": {
+                "start": {
+                    "on": {
+                        "INIT": {
+                            "target": "selectReason"
+                        }
+                    }
+                },
+                "selectReason": {
+                    "on": {
+                        "SUBMITREASON": "payment"
+                    }
+                },
+                "payment": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancelFromPayment"
+                    }
+                },
+                "cancelFromPayment": {
+                    "type": "final"
+                },
+                "submitPayment": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "confirmStatusChange"
+                        },
+                        "onError": {
+                            "target": "payment"
+                        }
+                    }
+                },
+                "confirmStatusChange": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "changeStatus"
+                        },
+                        "onDone": {
+                            "target": "end"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "end": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "CreateAccount": {
+            "id": "CreateAccount",
+            "initial": "start",
+            "context": {
+                "mappings": {
+                    "createAccount": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body': $merge([data.securityDetails.request.body,data.customerDetails.request.body,data.billingAddress.request.body,data.accountType.request.body])}},{'datasource':data.INIT.datasources[0]}])}"
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "INIT": {
+                            "actions": ["helpers-store"],
+                            "target": "customerDetails"
+                        }
+                    }
+                },
+                "customerDetails": {
+                    "on": {
+                        "SECURITYDETAILS": "securityDetails",
+                        "CANCEL": "cancel"
+                    },
+                    "exit": [
+                        {
+                            "type": "helpers-store",
+                            "data": {
+                                "key": "customerDetails"
+                            }
+                        }
+                    ]
+                },
+                "securityDetails": {
+                    "on": {
+                        "CUSTOMERDETAILS": "customerDetails",
+                        "BILLINGADDRESS": "billingAddress",
+                        "CANCEL": "cancel"
+                    },
+                    "exit": [
+                        {
+                            "type": "helpers-store",
+                            "data": {
+                                "key": "securityDetails"
+                            }
+                        }
+                    ]
+                },
+                "billingAddress": {
+                    "on": {
+                        "SECURITYDETAILS": "securityDetails",
+                        "VALIDATEADDRESS": "validateAddress",
+                        "CANCEL": "cancel"
+                    },
+                    "exit": [
+                        {
+                            "type": "helpers-store",
+                            "data": {
+                                "key": "billingAddress"
+                            }
+                        }
+                    ]
+                },
+                "validateAddress": {
+                    "invoke": {
+                        "id": "validateAddress",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "accountType"
+                        },
+                        "onError": {
+                            "target": "billingAddress"
+                        }
+                    }
+                },
+                "accountType": {
+                    "on": {
+                        "REVIEW": "review",
+                        "BILLINGADDRESS": "billingAddress",
+                        "SUBMIT": "submit",
+                        "CANCEL": "cancel"
+                    },
+                    "exit": [
+                        {
+                            "type": "helpers-store",
+                            "data": {
+                                "key": "accountType"
+                            }
+                        }
+                    ]
+                },
+                "review": {
+                    "on": {
+                        "SUBMIT": "submit",
+                        "ACCOUNTTYPE": "accountType",
+                        "CANCEL": "cancel"
+                    }
+                },
+                "submit": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "createAccount"
+                        },
+                        "onDone": {
+                            "target": "end"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "cancel": {
+                    "type": "final"
+                },
+                "end": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "ChangeBillCycle": {
+            "id": "ChangeBillCycle",
+            "initial": "start",
+            "context": {
+                "mappings": {
+                    "confirmChange": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body': {'billingAccountNumber':data.GETCHARGES.request.body.billingAccountNumber}}},{'datasource':data.GETCHARGES.request.confirmBillcycleDatasource}])}"
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "INIT": "waitForBillyCycleDateSelection"
+                    }
+                },
+                "waitForBillyCycleDateSelection": {
+                    "on": {
+                        "GETCHARGES": {
+                            "actions": ["helpers-store"],
+                            "target": "getCharges"
+                        },
+                        "END": "end"
+                    }
+                },
+                "getCharges": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "waitForDecision"
+                        },
+                        "onError": {
+                            "target": "resubmitGetCharges"
+                        }
+                    }
+                },
+                "resubmitGetCharges": {
+                    "on": {
+                        "GETCHARGES": "getCharges",
+                        "END": "end"
+                    }
+                },
+                "waitForDecision": {
+                    "on": {
+                        "CANCEL": "cancelBillcycleChange",
+                        "PAYMENT": "payment",
+                        "CONFIRM": "confirmBillcycleChange",
+                        "END": "cancelBillcycleChange"
+                    }
+                },
+                "payment": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancelBillcycleChange",
+                        "END": "cancelBillcycleChange",
+                        "WAITFORDECISION": "waitForDecision"
+                    }
+                },
+                "submitPayment": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "confirmBillcycleChange"
+                        },
+                        "onError": {
+                            "target": "resubmitPayment"
+                        }
+                    }
+                },
+                "resubmitPayment": {
+                    "on": {
+                        "SUBMITPAYMENT": "submitPayment",
+                        "CANCEL": "cancelBillcycleChange",
+                        "END": "cancelBillcycleChange"
+                    }
+                },
+                "confirmBillcycleChange": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "confirmChange"
+                        },
+                        "onDone": {
+                            "target": "billCycleChanged"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "cancelBillcycleChange": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService"
+                        },
+                        "onDone": {
+                            "target": "end"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "billCycleChanged": {
+                    "type": "final"
+                },
+                "end": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "CRPPayment": {
+            "id": "CRPPayment",
+            "initial": "start",
+            "context": {
+                "jumpTo": {
+                    "CHECKAUTOPAY": {
+                        "conditionExpr": "data.SUBMIT.request.decisionData.autopayEnroll ? 'AUTOPAYENROLL' : 'SUCCESS'",
+                        "source": "context"
+                    }
+                },
+                "mappings": {
+                    "enrollAutopay": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body':data.SUBMIT.request.decisionData.autopayData.data,'params':data.SUBMIT.request.decisionData.autopayData.params}},{'datasource':data.SUBMIT.request.decisionData.autopayData.datasource}])}",
+                            "responseMapping": {
+                                "error": {
+                                    "messageExpr": "(error.response.data ? error.response.data.message : error.response.statusText)"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "SUBMIT": {
+                            "actions": ["helpers-store"],
+                            "target": "submitPayment"
+                        }
+                    }
+                },
+                "submitPayment": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "paymentComplete"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "paymentComplete": {
+                    "entry": [
+                        {
+                            "type": "helpers-sendWokflowMessage",
+                            "data": {
+                                "event": "CHECKAUTOPAY",
+                                "data": {
+                                    "source": "crpPayment"
+                                }
+                            }
+                        }
+                    ],
+                    "on": {
+                        "CHECKAUTOPAY": {
+                            "actions": ["jumpTo"]
+                        },
+                        "AUTOPAYENROLL": "enrollAutopay",
+                        "SUCCESS": "success"
+                    }
+                },
+                "enrollAutopay": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "enrollAutopay"
+                        },
+                        "onDone": {
+                            "target": "success"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "success": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        },
+        "TouchlessWithBridgepay": {
+            "id": "TouchlessWithBridgepay",
+            "initial": "start",
+            "context": {
+                "jumpTo": {
+                    "CHECKBRIDGEPAYENROLL": {
+                        "conditionExpr": "data.SUBMIT.request.decisionData.bridgePay ? 'ENROLLBRIDGEPAY' : 'SUCCESS'",
+                        "source": "context"
+                    }
+                },
+                "mappings": {
+                    "enrollBridgepay": [
+                        {
+                            "source": "context",
+                            "expr": "{'body':$merge([{'request':{'body':data.SUBMIT.request.decisionData.bridgePayData.data}},{'datasource':data.SUBMIT.request.decisionData.bridgePayData.datasource}])}",
+                            "responseMapping": {
+                                "error": {
+                                    "messageExpr": "(error.response.data ? error.response.data.message : error.response.statusText)"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "states": {
+                "start": {
+                    "on": {
+                        "SUBMIT": {
+                            "actions": ["helpers-store"],
+                            "target": "submitTouchless"
+                        }
+                    }
+                },
+                "submitTouchless": {
+                    "invoke": {
+                        "id": "helpers-invokeService",
+                        "src": "helpers-invokeService",
+                        "onDone": {
+                            "target": "touchlessComplete"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "touchlessComplete": {
+                    "entry": [
+                        {
+                            "type": "helpers-sendWokflowMessage",
+                            "data": {
+                                "event": "CHECKBRIDGEPAYENROLL",
+                                "data": {
+                                    "source": "bridgepayEnroll"
+                                }
+                            }
+                        }
+                    ],
+                    "on": {
+                        "CHECKBRIDGEPAYENROLL": {
+                            "actions": ["jumpTo"]
+                        },
+                        "ENROLLBRIDGEPAY": "enrollBridgepay",
+                        "SUCCESS": "success"
+                    }
+                },
+                "enrollBridgepay": {
+                    "invoke": {
+                        "src": {
+                            "type": "helpers-invokeService",
+                            "op": "enrollBridgepay"
+                        },
+                        "onDone": {
+                            "target": "success"
+                        },
+                        "onError": {
+                            "target": "error"
+                        }
+                    }
+                },
+                "success": {
+                    "type": "final"
+                },
+                "error": {
+                    "type": "final"
+                }
+            }
+        }
+    },
+    "workflows": {
+        "UNLOCKDEVICE": "SingleStepProcess",
+        "UNLOCKSIM": "SingleStepProcess",
+        "GENERATENTP": "SingleStepProcess",
+        "RESETVMPASS": "SingleStepProcess",
+        "SETMARKETINGPREF": "CallService",
+        "ROBOCALL": "CallService",
+        "VALIDATEADDLINE": "CallService",
+        "SMSHISTORY": "CallService",
+        "SEARCHORDERS": "CallService",
+        "UPDATEORDER": "CallService",
+        "UPDATEPORTDETAILS": "CallService",
+        "CANCELORDER": "CallService",
+        "NETWORKSTATUS": "CallService",
+        "CREATEADJ": "CallService",
+        "AUTOPAY": "CallService",
+        "INTERACTION": "CallService",
+        "PAYMENT": "CallService",
+        "CSRPAYMENT": "CallService",
+        "CRPPAYMENT": "CRPPayment",
+        "SENDSMS": "CallService",
+        "UPDATECUSTOMERINFO": "CallService",
+        "SQA": "SingleStepProcess",
+        "INCENTIVEENROLLMENT": "SingleStepProcess",
+        "CHANGESIM": "UpdateEquipmentWithOtp",
+        "CHANGESIMWITHOUTOTP": "UpdateEquipment",
+        "CHANGEIMEI": "UpdateEquipment",
+        "CHANGECTN": "ChangeCTN",
+        "BILLCYCLE": "ChangeBillCycle",
+        "MOVESUB": "MoveSub",
+        "CHANGESUBSTATUS": "ChangeSubStatus",
+        "ONETIMEPASS": "SingleStepProcess",
+        "SEARCH": "CallService",
+        "OTP": "CallService",
+        "VALIDATECUSTOMER": "CallService",
+        "REVERSEADJUSTMENT": "CallService",
+        "SAVEINTERACTION": "CallService",
+        "LOGCUSTAUTH": "CallService",
+        "CREATECONTACT": "CreateContact",
+        "CREATEACCOUNT": "CreateAccount",
+        "NETWORKREFRESH": "SingleStepProcess",
+        "NEUSTARACTIVATION": "SingleStepProcess",
+        "ENROLLMENTAUTOPAY": "CallService",
+        "ENROLLMENTBRIDGEPAY": "CallService",
+        "LINKCASE": "CallService",
+        "VALIDATEPINCARD": "CallService",
+        "USAGEDETAILS": "CallService",
+        "CASEBULKUPDATE": "CallService",
+        "PENDINGACTIVITY": "CallService",
+        "PENDINGACTIVITYCANCEL": "CallService",
+        "TOUCHLESSWITHBRIDGEPAY": "TouchlessWithBridgepay",
+        "ENROLLMENTEBB": "CallService",
+        "DELETEAUTOPAY": "CallService",
+        "RESETCOUNTER": "CallService",
+        "EBBINVITE": "CallService",
+        "EBBENROLL": "CallService",
+        "SECURITYQUESTION": "CallService",
+        "CASEUPDATE": "CallService",
+        "SEARCHUSERS": "CallService",
+        "CUSTOMERINFOBYQUERY": "CallService",
+        "SEARCHCASES": "CallService",
+        "PORTPROTECT": "CallService",
+        "CREATEGSSMSTATE": "CallService",
+        "CREATECASE": "CallService",
+        "PROMOTIONS": "CallService",
+        "DELETEAUTHORIZEDUSER": "CallService",
+        "ADDAUTHORIZEDUSER": "CallService",
+        "UPDATEAUTHORIZEDUSER": "CallService",
+        "GETAUTHORIZEDUSERS": "CallService",
+        "EBBDEENROLL": "CallService",
+        "SUBMITINTERACTION": "CallService",
+        "GETUNIPHOREINTERACTION": "CallService",
+        "EBBCREDITADJ": "CallService",
+        "UPDATEACPADDRESS": "CallService",
+        "BULKRSA": "CallService",
+        "TECHNICALSOCUPDATE": "CallService",
+        "TECHNICALSOCUPDATETABLE": "CallService",
+        "DEVICEINFO": "CallService",
+        "ESIMSTATUS": "CallService",
+        "ESIMPROVISION": "CallService",
+        "ESIMEMAILQR": "CallService",
+        "MARKETINGOPTIN": "CallService",
+        "UPDATESMSTHIRDPARTY": "CallService",
+        "ESIMUPDATEUI": "CallService",
+        "FEEDBACKTOOL": "CallService",
+        "NEWNOTIFICATION": "CallService",
+        "BANHISTORY": "CallService",
+        "UNLOCKIMEISEARCH": "CallService",
+        "DEVICEUNLOCK": "CallService",
+        "BULKRESUME": "CallService",
+        "BULKRESUMENOFEE": "CallService",
+        "ONESTEPCHANGESUBSTATUS": "CallService",
+        "GETAUTHTOKEN": "CallService",
+        "UNLDOWNGRADETABLETLINES": "CallService",
+        "VALIDATETABLETDATA": "CallService",
+        "VALIDATECANCELTABLET": "CallService",
+        "FETCHACCOUNTBALANCE": "CallService",
+        "ACPSTATUS": "CallService",
+        "OVERRIDESQAANDPIN": "CallService",
+        "WHITELISTDEVICE": "CallService",
+        "GETMAPPEDTABLETPLAN": "CallService"
+    }
+}
